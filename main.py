@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 from taipy.gui import Gui, notify
 
+
 API_KEY = "ADD YOUR OPENAI API KEY HERE"
 INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
@@ -77,9 +78,11 @@ with open('dataset.csv', newline='') as csv_input, open('out.csv', 'w') as csv_o
     header = ["Index", "Date", "Cost"]
     writer.writerow(header)
 
-    count = 0
     for index, Date, Cost in reader:
-        writer.writerow([index, Date, int(Cost)/10])
+        #rand = round(random.uniform(10,28), 2)
+        #if int(Cost) > 28:
+            #Cost = int(Cost) - rand
+        writer.writerow([index, Date, int(Cost)/5])
 
 def get_data(path_to_csv: str):
     # pandas.read_csv() returns a pd.DataFrame
@@ -104,7 +107,7 @@ page = """
 
 ## Avg Cost of Filament:
 
-<|{dataset[1:]}|chart|type=bar|x=Date|y=Cost|>
+<|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
 
 <|{dataset}|table|width=100%|>
 """
