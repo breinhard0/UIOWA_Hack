@@ -5,7 +5,6 @@ import requests
 import pandas as pd
 from taipy.gui import Gui, notify
 
-
 API_KEY = "ADD YOUR OPENAI API KEY HERE"
 INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
