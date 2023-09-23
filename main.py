@@ -67,6 +67,20 @@ def on_send_click(state):
     state.saved_messages = state.saved_messages
     notify(state, "success", "GPT-4 generated a response!")
 
+import csv
+with open('dataset.csv', newline='') as csv_input, open('out.csv', 'w') as csv_output:
+    reader = csv.reader(csv_input)
+    writer = csv.writer(csv_output)
+
+    # Header doesn't need extra processing
+    header = next(reader)
+    header = ["Index", "Date", "Cost"]
+    writer.writerow(header)
+
+    count = 0
+    for index, Date, Cost in reader:
+        writer.writerow([index, Date, int(Cost)/10])
+
 def get_data(path_to_csv: str):
     # pandas.read_csv() returns a pd.DataFrame
     dataset = pd.read_csv(path_to_csv)
@@ -74,9 +88,7 @@ def get_data(path_to_csv: str):
     return dataset
 
 # Read the dataframe
-path_to_csv = "dataset.csv"
-dataset = get_data(path_to_csv)
-
+path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
 page = """
@@ -92,16 +104,10 @@ page = """
 
 ## Avg Cost of Filament:
 
-<|{dataset[9000:]}|chart|type=bar|x=Date|y=Value|>
+<|{dataset[1:]}|chart|type=bar|x=Date|y=Cost|>
 
 <|{dataset}|table|width=100%|>
 """
-
-
-
-# Initial value
-#n_week = 10
-
-
+print(dataset[1000:])
 Gui(page).run()
 
