@@ -6,7 +6,7 @@ import pandas as pd
 from taipy.gui import Gui, notify
 
 API_KEY = "ADD YOUR OPENAI API KEY HERE"
-INITIAL_PROMPT = "I am a helpful assistant."
+INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
 
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
@@ -45,12 +45,12 @@ def messages_to_data(messages):
     result = []
     for message in messages:
         result_message = {}
-        result_message["Role"] = message["role"]
+        result_message["Enter Information to Begin"] = message["role"]
         result_message["Message"] = message["content"]
-        if result_message["Role"] == "system":
-            result_message["Role"] = "GPT-4"
+        if result_message["Enter Information to Begin"] == "system":
+            result_message["Enter Information to Begin"] = "Result: "
         else:
-            result_message["Role"] = "You"
+            result_message["Enter Information to Begin"] = "You"
         result.append(result_message)
     return pd.DataFrame(result)
 
@@ -67,9 +67,20 @@ def on_send_click(state):
     state.saved_messages = state.saved_messages
     notify(state, "success", "GPT-4 generated a response!")
 
+def get_data(path_to_csv: str):
+    # pandas.read_csv() returns a pd.DataFrame
+    dataset = pd.read_csv(path_to_csv)
+    dataset["Date"] = pd.to_datetime(dataset["Date"])
+    return dataset
+
+# Read the dataframe
+path_to_csv = "dataset.csv"
+dataset = get_data(path_to_csv)
+
+dataset = get_data(path_to_csv)
 
 page = """
-# Chat with **GPT-4**{: .color-primary}
+# **FilamentFinancer**{: .color-primary}
 
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
 
@@ -78,7 +89,19 @@ page = """
 <|{user_message}|input|multiline=True|lines_shown=2|label=Your Message|on_action=on_send_click|class_name=fullwidth|>
 
 <|Send|button|on_action=on_send_click|>
+
+## Avg Cost of Filament:
+
+<|{dataset[9000:]}|chart|type=bar|x=Date|y=Value|>
+
+<|{dataset}|table|width=100%|>
 """
+
+
+
+# Initial value
+#n_week = 10
+
 
 Gui(page).run()
 
