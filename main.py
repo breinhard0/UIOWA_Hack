@@ -92,7 +92,7 @@ path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
 page = """
-# **Filament Financer**{: .color-primary}
+# **FilamentFinancer**{: .color-primary}
 
 
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
