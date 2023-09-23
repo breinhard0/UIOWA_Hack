@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 from taipy.gui import Gui, notify
 
-API_KEY = "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"
+API_KEY = "ADD YOUR OPENAI API KEY HERE"
 INITIAL_PROMPT = "I am a helpful assistant."
 MAX_TOKENS = 150
 
@@ -80,11 +80,5 @@ page = """
 <|Send|button|on_action=on_send_click|>
 """
 
-<<<<<<< HEAD
 Gui(page).run()
-=======
-# Create a Gui object with our page content
-Gui(page=page).run(dark_mode=True)
 
-#testing
->>>>>>> refs/remotes/origin/main
