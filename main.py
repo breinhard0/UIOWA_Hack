@@ -50,7 +50,7 @@ def messages_to_data(messages):
         if result_message["Enter Information to Begin"] == "system":
             result_message["Enter Information to Begin"] = "Result: "
         else:
-            result_message["Enter Information to Begin"] = "You"
+            result_message["Enter Information to Begin"] = "User Input"
         result.append(result_message)
     return pd.DataFrame(result)
 
@@ -92,17 +92,18 @@ path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
 page = """
-# **FilamentFinancer**{: .color-primary}
+# **Filament Financer**{: .color-primary}
+
 
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
 
 <br/>
 
-<|{user_message}|input|multiline=True|lines_shown=2|label=Your Message|on_action=on_send_click|class_name=fullwidth|>
+<|{user_message}|input|multiline=false|lines_shown=100|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
-<|Send|button|on_action=on_send_click|>
+<|Enter|button|on_action=on_send_click|>
 
-## Avg Cost of Filament:
+## <p style="text-align: center;">Avg Cost of Filament</p>
 
 <|{dataset[1:]}|chart|type=bar|x=Date|y=Cost|>
 
