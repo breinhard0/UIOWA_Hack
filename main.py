@@ -1,41 +1,83 @@
+import json
+import time
+
+import requests
 import pandas as pd
-from taipy import Gui
+from taipy.gui import Gui, notify
 
-def get_data(path_to_csv: str):
-    # pandas.read_csv() returns a pd.DataFrame
-    dataset = pd.read_csv(path_to_csv)
-    dataset["Date"] = pd.to_datetime(dataset["Date"])
-    return dataset
+API_KEY = "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"
+INITIAL_PROMPT = "I am a helpful assistant."
+MAX_TOKENS = 150
 
-# Read the dataframe
-path_to_csv = "dataset.csv"
-dataset = get_data(path_to_csv)
+API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 
+def generate_completion(messages, model="gpt-4", temperature=1):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {API_KEY}",
+    }
+
+    data = {
+        "model": model,
+        "messages": messages,
+        "temperature": temperature,
+    }
+
+    data["max_tokens"] = MAX_TOKENS
+
+    response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
+
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"]
+    else:
+        return "I'm sorry, GPT-4 is not available right now."
 
 
-dataset = get_data(path_to_csv)
+saved_messages = [
+    {"role": "system", "content": INITIAL_PROMPT},
+]
 
-# Initial value
-n_week = 10
+user_message = ""
 
-# Definition of the page
+
+def messages_to_data(messages):
+    result = []
+    for message in messages:
+        result_message = {}
+        result_message["Role"] = message["role"]
+        result_message["Message"] = message["content"]
+        if result_message["Role"] == "system":
+            result_message["Role"] = "GPT-4"
+        else:
+            result_message["Role"] = "You"
+        result.append(result_message)
+    return pd.DataFrame(result)
+
+
+def on_send_click(state):
+    notify(state, "info", "Generating response...")
+    message = state.user_message
+    state.saved_messages.append({"role": "user", "content": message})
+    state.saved_messages = state.saved_messages
+    state.user_message = ""
+    time.sleep(0.1)
+    response = generate_completion(state.saved_messages)
+    state.saved_messages.append({"role": "system", "content": response})
+    state.saved_messages = state.saved_messages
+    notify(state, "success", "GPT-4 generated a response!")
+
+
 page = """
-# 3D Printing Data
+# Chat with **GPT-4**{: .color-primary}
 
-Week number: *<|{n_week}|>*
+<|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
 
-Interact with this slider to change the week number:
+<br/>
 
-<|{n_week}|slider|min=1|max=52|>
+<|{user_message}|input|multiline=True|lines_shown=2|label=Your Message|on_action=on_send_click|class_name=fullwidth|>
 
-## Dataset:
-
-Display the last three months of data:
-<|{dataset[9000:]}|chart|type=bar|x=Date|y=Value|>
-
-<|{dataset}|table|width=100%|>
+<|Send|button|on_action=on_send_click|>
 """
 
-# Create a Gui object with our page content
-Gui(page=page).run(dark_mode=True)
+Gui(page).run()
