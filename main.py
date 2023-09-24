@@ -1,6 +1,5 @@
 import json
 import time
-import csv
 
 import requests
 import pandas as pd
@@ -11,8 +10,6 @@ INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
 
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-
-
 def generate_completion(messages, model="gpt-4", temperature=1):
     headers = {
         "Content-Type": "application/json",
@@ -75,24 +72,6 @@ def get_data(path_to_csv: str):
     dataset["Date"] = pd.to_datetime(dataset["Date"])
     return dataset
 
-# with open('out.csv', newline='') as csv_input, open('dataset.csv', 'w') as csv_output:
-#     reader = csv.reader(csv_input)
-#     writer = csv.writer(csv_output)
-#
-#     header = next(reader)
-#     header = ["Material", "Date", "Cost (kg)"]
-#     writer.writerow(header)
-#
-#     for index, Date, Cost in reader:
-#         if float(Cost) < 17:
-#             index = "PLA"
-#         elif 17 >= float(Cost) < 34:
-#             index = "PETG"
-#         else:
-#             index = "ABS"
-#         writer.writerow([index, Date, f"${Cost}"])
-
-#Read the dataframe
 path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
@@ -105,27 +84,18 @@ page = """
 
 <br/>
 
-<<<<<<< Updated upstream
 <div class="btn-group">
 Filament
-    <ul class = "dropdown-menu" role = "menu">
+    <ul>
         <li><a href = "#">PLA</a></li>
-        <li><a href = "#">PETA</a></li>
+        <li><a href = "#">PETG</a></li>
         <li><a href = "#">ABS</a></li>
     </ul>
 </div>
 
-
 <|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
 <|Enter|button|on_action=on_send_click|>
-
-### <p style="text-align: center;">Average Cost of Filament</p>
-=======
-<|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
-
-<|Enter|button|on_action=on_send_click|>
->>>>>>> Stashed changes
 
 ### <p style="text-align: center;">Average Cost of Filament</p>
 <|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
@@ -133,6 +103,4 @@ Filament
 <|{datasetTable}|table|width=100%|>
 """
 
-#THis is some test to show yea###
-#print(dataset[1000:])
 Gui(page).run()
