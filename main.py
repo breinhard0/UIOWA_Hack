@@ -12,6 +12,9 @@ Filament_Type = ''
 answer = ''
 result = ''
 
+TotalCost = 0
+
+
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 def generate_completion(messages, model="gpt-3.5", temperature=1):
     headers = {
@@ -68,7 +71,6 @@ def on_send_click(state):
 
 
 def get_data(path_to_csv: str):
-    # pandas.read_csv() returns a pd.DataFrame
     dataset = pd.read_csv(path_to_csv)
     dataset["Date"] = pd.to_datetime(dataset["Date"])
     return dataset
@@ -114,19 +116,11 @@ def change_toABSaction(state):
 
 def button_Action(state):
     notify(state, "info", "Generating response...")
+    time.sleep(3)
     answer = state.user_message
     result = answer
-    print(result)
-
-def filament(Filament):
-    PricePerGram = (random.randint(9, 17) * int(result)) / 1000
-    if(Filament == "PLA"):
-        PricePerGram = (random.randint(9, 17) * int(result))/1000
-    if (Filament == "PETG"):
-        PricePerGram = (random.randint(17, 34) * int(result))/1000
-    if (Filament == "PLA"):
-        PricePerGram = (random.randint(34, 51) * int(result))/1000
-
+    TotalCost = (random.randint(9, 17) * int(result)) / 1000
+    notify(state, "Success", f"Cost: ${TotalCost}", system_notification = True, duration = 7000)
 
 
 Gui(page).run()
