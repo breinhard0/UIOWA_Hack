@@ -8,6 +8,7 @@ from taipy.gui import Gui, notify
 API_KEY = "ADD YOUR OPENAI API KEY HERE"
 INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
+Filament_Type = ''
 
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 def generate_completion(messages, model="gpt-4", temperature=1):
@@ -81,17 +82,12 @@ datasetTable = get_data(path_to_csv)
 page = """
 ## **FilamentFinancer**{: .color-primary}
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
-
 <br/>
+# <|{Filament_Type}|>
 
-<div class="btn-group">
-Filament
-    <ul>
-        <li><a href = "#">PLA</a></li>
-        <li><a href = "#">PETG</a></li>
-        <li><a href = "#">ABS</a></li>
-    </ul>
-</div>
+<|PLA|button|on_action=change_toPLAaction|>
+<|PETG|button|on_action=change_toPETGaction|>
+<|ABS|button|on_action=change_toABSaction|>
 
 <|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
@@ -102,5 +98,29 @@ Filament
 
 <|{datasetTable}|table|width=100%|>
 """
+
+
+def change_toPLAaction(state):
+    notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
+    state.Filament_Type = "PLA"
+    Filament_Type = "PLA"
+    print(Filament_Type)
+
+def change_toPETGaction(state):
+    notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
+    state.Filament_Type = "PETG"
+    Filament_Type = "PETG"
+    print(Filament_Type)
+
+def change_toABSaction(state):
+    notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
+    state.Filament_Type = "ABS"
+    Filament_Type = "ABS"
+    print(Filament_Type)
+
+
+
+#THis is some test to show yea###
+#print(dataset[1000:])
 
 Gui(page).run()
