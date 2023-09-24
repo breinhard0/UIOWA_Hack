@@ -16,13 +16,12 @@ Before you begin, ensure you have met the following requirements:
 
 Python 3.x installed on your system.
 The required libraries installed. You can install them using pip:
-bash
-Copy code
+<br>
 pip install requests pandas taipy
+<br>
 Installation
 Clone the repository:
-bash
-Copy code
+<br>
 git clone https://github.com/your-username/FilamentFinancer.git
 Replace "YOUR_API_KEY" in the code with your OpenAI GPT-3.5 API key.
 
