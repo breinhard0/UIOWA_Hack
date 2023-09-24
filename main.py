@@ -100,11 +100,21 @@ page = """
 
 <br/>
 
-<|{user_message}|input|multiline=True|lines_shown=2|label=Your Message|on_action=on_send_click|class_name=fullwidth|>
+<div class="btn-group">
+Filament
+    <ul class = "dropdown-menu" role = "menu">
+        <li><a href = "#">PLA</a></li>
+        <li><a href = "#">PETA</a></li>
+        <li><a href = "#">ABS</a></li>
+    </ul>
+</div>
 
-<|Send|button|on_action=on_send_click|>
 
-## Avg Cost of Filament:
+<|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
+
+<|Enter|button|on_action=on_send_click|>
+
+### <p style="text-align: center;">Average Cost of Filament</p>
 
 <|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
 
