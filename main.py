@@ -43,16 +43,17 @@ saved_messages = [
 ]
 
 user_message = ""
+user_message2 = ""
 def messages_to_data(messages):
     result = []
     for message in messages:
         result_message = {}
-        result_message["Enter Information to Begin"] = message["role"]
+        result_message["Role"] = message["role"]
         result_message["Message"] = message["content"]
-        if result_message["Enter Information to Begin"] == "system":
-            result_message["Enter Information to Begin"] = "Result: "
+        if result_message["Role"] == "system":
+            result_message["Role"] = "Result: "
         else:
-            result_message["Enter Information to Begin"] = "You"
+            result_message["Role"] = "You"
         result.append(result_message)
     return pd.DataFrame(result)
 
@@ -88,11 +89,20 @@ page = """
 <|PETG|button|on_action=change_toPETGaction|>
 <|ABS|button|on_action=change_toABSaction|>
 
-<|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
+
+<|{user_message2}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
 <|Enter|button|on_action=button_Action|>
+
 <br/>
+<br/>
+<br/>
+### <p style="text-align: center;">What can I help you with?</p>
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
+
+<|{user_message}|input|multiline=True|lines_shown=2|label=Your Message|on_action=on_send_click|class_name=fullwidth|>
+
+<|Send|button|on_action=on_send_click|>
 
 ### <p style="text-align: center;">Average Cost of Filament</p>
 <|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
@@ -117,7 +127,7 @@ def change_toABSaction(state):
 def button_Action(state):
     notify(state, "info", "Generating response...")
     time.sleep(3)
-    answer = state.user_message
+    answer = state.user_message2
     result = answer
     TotalCost = (random.randint(9, 17) * int(result)) / 1000
     notify(state, "Success", f"Cost: ${TotalCost}", system_notification = True, duration = 7000)
