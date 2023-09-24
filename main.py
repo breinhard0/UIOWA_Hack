@@ -1,5 +1,6 @@
 import json
 import time
+import csv
 
 import requests
 import pandas as pd
@@ -67,21 +68,6 @@ def on_send_click(state):
     state.saved_messages = state.saved_messages
     notify(state, "success", "GPT-4 generated a response!")
 
-import csv
-with open('dataset.csv', newline='') as csv_input, open('out.csv', 'w') as csv_output:
-    reader = csv.reader(csv_input)
-    writer = csv.writer(csv_output)
-
-    # Header doesn't need extra processing
-    header = next(reader)
-    header = ["Index", "Date", "Cost"]
-    writer.writerow(header)
-
-    for index, Date, Cost in reader:
-        #rand = round(random.uniform(10,28), 2)
-        #if int(Cost) > 28:
-            #Cost = int(Cost) - rand
-        writer.writerow([index, Date, int(Cost)/5])
 
 def get_data(path_to_csv: str):
     # pandas.read_csv() returns a pd.DataFrame
@@ -89,17 +75,37 @@ def get_data(path_to_csv: str):
     dataset["Date"] = pd.to_datetime(dataset["Date"])
     return dataset
 
-# Read the dataframe
+# with open('out.csv', newline='') as csv_input, open('dataset.csv', 'w') as csv_output:
+#     reader = csv.reader(csv_input)
+#     writer = csv.writer(csv_output)
+#
+#     header = next(reader)
+#     header = ["Material", "Date", "Cost (kg)"]
+#     writer.writerow(header)
+#
+#     for index, Date, Cost in reader:
+#         if float(Cost) < 17:
+#             index = "PLA"
+#         elif 17 >= float(Cost) < 34:
+#             index = "PETG"
+#         else:
+#             index = "ABS"
+#         writer.writerow([index, Date, f"${Cost}"])
+
+#Read the dataframe
 path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
-page = """
-# **FilamentFinancer**{: .color-primary}
+path_to_csv = "dataset.csv"
+datasetTable = get_data(path_to_csv)
 
+page = """
+## **FilamentFinancer**{: .color-primary}
 <|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
 
 <br/>
 
+<<<<<<< Updated upstream
 <div class="btn-group">
 Filament
     <ul class = "dropdown-menu" role = "menu">
@@ -115,11 +121,17 @@ Filament
 <|Enter|button|on_action=on_send_click|>
 
 ### <p style="text-align: center;">Average Cost of Filament</p>
+=======
+<|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
+<|Enter|button|on_action=on_send_click|>
+>>>>>>> Stashed changes
+
+### <p style="text-align: center;">Average Cost of Filament</p>
 <|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
 
-<|{dataset}|table|width=100%|>
+<|{datasetTable}|table|width=100%|>
 """
-print(dataset[1000:])
-Gui(page).run()
 
+#print(dataset[1000:])
+Gui(page).run()
