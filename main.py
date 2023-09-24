@@ -1,6 +1,5 @@
 import json
 import time
-import csv
 
 import requests
 import pandas as pd
@@ -12,8 +11,6 @@ MAX_TOKENS = 150
 Filament_Type = ''
 
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-
-
 def generate_completion(messages, model="gpt-4", temperature=1):
     headers = {
         "Content-Type": "application/json",
@@ -76,24 +73,6 @@ def get_data(path_to_csv: str):
     dataset["Date"] = pd.to_datetime(dataset["Date"])
     return dataset
 
-# with open('out.csv', newline='') as csv_input, open('dataset.csv', 'w') as csv_output:
-#     reader = csv.reader(csv_input)
-#     writer = csv.writer(csv_output)
-#
-#     header = next(reader)
-#     header = ["Material", "Date", "Cost (kg)"]
-#     writer.writerow(header)
-#
-#     for index, Date, Cost in reader:
-#         if float(Cost) < 17:
-#             index = "PLA"
-#         elif 17 >= float(Cost) < 34:
-#             index = "PETG"
-#         else:
-#             index = "ABS"
-#         writer.writerow([index, Date, f"${Cost}"])
-
-#Read the dataframe
 path_to_csv = "out.csv"
 dataset = get_data(path_to_csv)
 
@@ -109,7 +88,6 @@ page = """
 <|PLA|button|on_action=change_toPLAaction|>
 <|PETG|button|on_action=change_toPETGaction|>
 <|ABS|button|on_action=change_toABSaction|>
-    
 
 <|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
@@ -144,4 +122,5 @@ def change_toABSaction(state):
 
 #THis is some test to show yea###
 #print(dataset[1000:])
+
 Gui(page).run()
