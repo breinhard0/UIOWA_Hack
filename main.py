@@ -1,6 +1,6 @@
 import json
 import time
-
+import random
 import requests
 import pandas as pd
 from taipy.gui import Gui, notify
@@ -9,9 +9,11 @@ API_KEY = "ADD YOUR OPENAI API KEY HERE"
 INITIAL_PROMPT = "N/A"
 MAX_TOKENS = 150
 Filament_Type = ''
+answer = ''
+result = ''
 
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-def generate_completion(messages, model="gpt-4", temperature=1):
+def generate_completion(messages, model="gpt-3.5", temperature=1):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {API_KEY}",
@@ -38,8 +40,6 @@ saved_messages = [
 ]
 
 user_message = ""
-
-
 def messages_to_data(messages):
     result = []
     for message in messages:
@@ -80,10 +80,7 @@ path_to_csv = "dataset.csv"
 datasetTable = get_data(path_to_csv)
 
 page = """
-## **FilamentFinancer**{: .color-primary}
-<|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
-<br/>
-# <|{Filament_Type}|>
+# **FilamentFinancer**{: .color-primary}
 
 <|PLA|button|on_action=change_toPLAaction|>
 <|PETG|button|on_action=change_toPETGaction|>
@@ -91,36 +88,45 @@ page = """
 
 <|{user_message}|input|multiline=false|lines_shown=2|label=Input Grams|on_action=on_send_click|class_name=smaller-input-box|>
 
-<|Enter|button|on_action=on_send_click|>
+<|Enter|button|on_action=button_Action|>
+<br/>
+<|{messages_to_data(saved_messages)}|table|show_all|width=100%|>
 
 ### <p style="text-align: center;">Average Cost of Filament</p>
 <|{dataset[1000:]}|chart|type=bar|x=Date|y=Cost|>
 
 <|{datasetTable}|table|width=100%|>
 """
-
-
 def change_toPLAaction(state):
     notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
     state.Filament_Type = "PLA"
     Filament_Type = "PLA"
-    print(Filament_Type)
 
 def change_toPETGaction(state):
     notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
     state.Filament_Type = "PETG"
     Filament_Type = "PETG"
-    print(Filament_Type)
 
 def change_toABSaction(state):
     notify(state, 'info', f'The filiament type is: {state.Filament_Type}')
     state.Filament_Type = "ABS"
     Filament_Type = "ABS"
-    print(Filament_Type)
+
+def button_Action(state):
+    notify(state, "info", "Generating response...")
+    answer = state.user_message
+    result = answer
+    print(result)
+
+def filament(Filament):
+    PricePerGram = (random.randint(9, 17) * int(result)) / 1000
+    if(Filament == "PLA"):
+        PricePerGram = (random.randint(9, 17) * int(result))/1000
+    if (Filament == "PETG"):
+        PricePerGram = (random.randint(17, 34) * int(result))/1000
+    if (Filament == "PLA"):
+        PricePerGram = (random.randint(34, 51) * int(result))/1000
 
 
-
-#THis is some test to show yea###
-#print(dataset[1000:])
 
 Gui(page).run()
